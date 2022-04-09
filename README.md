@@ -1,6 +1,6 @@
 # Theatre Manager
 
-A WooCommerce Admin Extension
+Handles ticketing and room hire for theatres based on Woocommerce. Completely free and open source, no premium nonsense.
 
 ## Development
 
