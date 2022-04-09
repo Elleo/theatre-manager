@@ -1,6 +1,19 @@
 <?php
 /**
  * Plugin Name: Theatre Manager
+ * Plugin URI: https://github.com/Elleo/theatre-manager
+ * Description: Handles ticketing and room hire for theatres based on Woocommerce. 
+ * Version: 0.1.0
+ * Author: Mike Sheldon
+ * Author URI: https://mikeasoft.com
+ * Developer: Mike Sheldon
+ * Developer URI: https://mikeasoft.com
+ *
+ * Text Domain: theatre-manager
+ * Domain Path: /languages
+ *
+ * License: GNU General Public License v3.0
+ * License URI: http://www.gnu.org/licenses/gpl-3.0.html
  *
  * @package WooCommerce\Admin
  */
