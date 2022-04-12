@@ -75,20 +75,7 @@ if ( !class_exists( 'TheatreManager' ) ) :
             } );
             add_action( 'woocommerce_product_options_pricing', array( $this, 'add_advanced_pricing' ) );
             add_action( 'admin_footer', array( $this, 'enable_js_on_products' ) );
-            register_activation_hook( __FILE__, array( $this, 'install' ) );
             add_action( 'woocommerce_single_product_summary', array( $this, 'add_booking_form'), 20 );
-        }
-
-        public function install() {
-            if ( ! get_term_by( 'slug', 'room', 'product_type' ) ) {
-                wp_insert_term( 'room', 'product_type' );
-            }
-            if ( ! get_term_by( 'slug', 'workshop', 'product_type' ) ) {
-                wp_insert_term( 'workshop', 'product_type' );
-            }
-            if ( ! get_term_by( 'slug', 'performance', 'product_type' ) ) {
-                wp_insert_term( 'performance', 'product_type' );
-            }
         }
 
         public function add_booking_form() {
@@ -227,5 +214,19 @@ function theatre_manager_initialize() {
 
     $GLOBALS['theatre_manager'] = TheatreManager::instance();
 }
+
 add_action( 'plugins_loaded', 'theatre_manager_initialize', 10 );
 
+register_activation_hook( __FILE__, 'install' );
+
+function install() {
+    if ( !get_term_by( 'slug', 'room', 'product_type' ) ) {
+        wp_insert_term( 'room', 'product_type' );
+    }
+    if ( !get_term_by( 'slug', 'workshop', 'product_type' ) ) {
+        wp_insert_term( 'workshop', 'product_type' );
+    }
+    if ( !get_term_by( 'slug', 'performance', 'product_type' ) ) {
+        wp_insert_term( 'performance', 'product_type' );
+    }
+}
