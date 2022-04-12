@@ -1,20 +1,16 @@
 <?php
 
-class Room extends WC_Product_Simple {
+function register_room_product_type() {
 
-    public function get_type() {
-        return "room";
-    }
+    class Room extends WC_Product_Simple {
 
-    public function get_price( $context = 'view' ) {
-
-        if ( current_user_can('manage_options') ) {
-            $price = $this->get_meta( '_member_price', true );
-            if ( is_numeric( $price ) ) {
-                return $price;
-            }
-        
+        public function __construct( $product ) {
+            die("That happened");
+            $this->product_type = 'room';
+            parent::__construct( $product );
         }
-        return $this->get_prop( 'price', $context );
     }
 }
+
+add_action( 'plugins_loaded', 'register_room_product_type' );
+

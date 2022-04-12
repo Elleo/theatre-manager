@@ -71,21 +71,67 @@ if ( !class_exists( 'TheatreManager' ) ) :
             add_action( 'admin_menu', array( $this, 'register_menu_items' ) );
             add_filter( 'product_type_selector', array( $this, 'add_type' ) );
             add_action( 'woocommerce_product_options_general_product_data', function(){
-                echo '<div class="options_group room clear"></div>';
+                echo '<div class="options_group theatre_product clear"></div>';
             } );
             add_action( 'woocommerce_product_options_pricing', array( $this, 'add_advanced_pricing' ) );
+            add_action( 'admin_footer', array( $this, 'enable_js_on_products' ) );
+            register_activation_hook( __FILE__, array( $this, 'install' ) );
+            add_action( 'woocommerce_single_product_summary', array( $this, 'add_booking_form'), 20 );
+        }
+
+        public function install() {
+            if ( ! get_term_by( 'slug', 'room', 'product_type' ) ) {
+                wp_insert_term( 'room', 'product_type' );
+            }
+            if ( ! get_term_by( 'slug', 'workshop', 'product_type' ) ) {
+                wp_insert_term( 'workshop', 'product_type' );
+            }
+            if ( ! get_term_by( 'slug', 'performance', 'product_type' ) ) {
+                wp_insert_term( 'performance', 'product_type' );
+            }
+        }
+
+        public function add_booking_form() {
+            $today = date('Y-m-d');
+        ?>
+            <label>Booking date: <input type='date' id='date' value='<?=$today?>' /></label>
+        <?php
+        }
+
+        public function enable_js_on_products() {
+            global $post, $product_object;
+
+            if ( ! $post ) { return; }
+
+            if ( 'product' != $post->post_type ) { return; }
+
+            $is_theatre_product = $product_object && in_array($product_object->get_type(), ["simple", "room", "workshop", "performance"]);
+
+            ?>
+            <script type='text/javascript'>
+                jQuery(document).ready(function () {
+                    //for Price tab
+                    jQuery('#general_product_data .pricing').addClass('theatre_product');
+
+                    <?php if ( $is_theatre_product ) { ?>
+                        jQuery('#general_product_data .pricing').show();
+                    <?php } ?>
+                });
+           </script>
+           <?php
         }
 
         public function add_advanced_pricing() {
             global $product_object;
             ?>
-            <div class='options_group room'>
+            <div class='options_group theatre_product'>
+
             <?php
 
                 woocommerce_wp_text_input(
                     array(
                         'id'          => '_member_price',
-                        'label'       => __( 'Pricing only for members', 'your_textdomain' ),
+                        'label'       => __( 'Pricing only for members', 'theatre_manager' ),
                         'value'       => $product_object->get_meta( '_member_price', true ),
                         'default'     => '',
                         'placeholder' => 'Add pricing',
@@ -162,6 +208,9 @@ if ( !class_exists( 'TheatreManager' ) ) :
         }
 
         public function add_type( $types ) {
+            $types = array();
+            $types['workshop'] = __( 'Workshop', 'theatre-manager' );
+            $types['performance'] = __( 'Performance', 'theatre-manager' );
             $types['room'] = __( 'Room', 'theatre-manager' );
 
             return $types;
