@@ -220,6 +220,7 @@ add_action( 'plugins_loaded', 'theatre_manager_initialize', 10 );
 register_activation_hook( __FILE__, 'install' );
 
 function install() {
+    global $wpdb;
     if ( !get_term_by( 'slug', 'room', 'product_type' ) ) {
         wp_insert_term( 'room', 'product_type' );
     }
@@ -229,4 +230,22 @@ function install() {
     if ( !get_term_by( 'slug', 'performance', 'product_type' ) ) {
         wp_insert_term( 'performance', 'product_type' );
     }
+
+    $bookings_table = $wpdb->prefix . "bookings";
+
+    $charset_collate = $wpdb->get_charset_collate();
+
+    $sql = "CREATE TABLE IF NOT EXISTS $bookings_table (
+        id mediumint(9) NOT NULL AUTO_INCREMENT,
+        product_id bigint(20) unsigned,
+        order_id bigint(20) unsigned,
+        start_time datetime DEFAULT '0000-00-00 00:00:00' NOT NULL,
+        end_time datetime DEFAULT '0000-00-00 00:00:00' NOT NULL,
+        PRIMARY KEY  (id),
+        FOREIGN KEY  (product_id) REFERENCES wp_posts(ID),
+        FOREIGN KEY  (order_id) REFERENCES wp_wc_order_stats(order_id)
+    ) $charset_collate;";
+
+    require_once( ABSPATH . 'wp-admin/includes/upgrade.php' );
+    dbDelta( $sql );
 }
