@@ -75,14 +75,11 @@ if ( !class_exists( 'TheatreManager' ) ) :
             } );
             add_action( 'woocommerce_product_options_pricing', array( $this, 'add_advanced_pricing' ) );
             add_action( 'admin_footer', array( $this, 'enable_js_on_products' ) );
-            add_action( 'woocommerce_single_product_summary', array( $this, 'add_booking_form'), 20 );
+            add_action( 'woocommerce_before_add_to_cart_button', array( $this, 'add_booking_form') );
         }
 
         public function add_booking_form() {
-            $today = date('Y-m-d');
-        ?>
-            <label>Booking date: <input type='date' id='date' value='<?=$today?>' /></label>
-        <?php
+            require_once("booking-form.php");
         }
 
         public function enable_js_on_products() {
